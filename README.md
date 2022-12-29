@@ -191,7 +191,42 @@ void Move(float h, float v, bool isWalk)
 ```
 
 * 애니메이션 추가 (애니메이션 모델은 에셋에 있는걸 활용)
-  - Asset에 Animator controller(애니메이션을 컨트롤하는 컴포넌트) 추가 --> player 오브젝트에 자식 오브젝트중 Mesh Object에 애니메이션 컨트롤러 컴포넌트 추가(왜 여기다가 추가해야되지? player 오브젝트에 직접추가하면 안되는건가??)
+  - Asset에 Animator controller(애니메이션을 컨트롤하는 컴포넌트) 추가 --> player 오브젝트에 자식 오브젝트중 Mesh Object에 애니메이션 컨트롤러 (??? : 왜 여기다가 추가해야되지? player 오브젝트에 직접추가하면 안되는건가?)
 
-* 애니메이션 컨트롤러
-<img src="img/애니메이션 컨트롤러.PNG">
+* Mecanim(애니메이션 시스템)
+  - 구성요소 : 애니메이터, 아바타 , 애니메이션 클립, 애니메이터 컨트롤러
+  - 메카님을 이용하는데 가장 먼저 필요한 것이 바로 Animator Component 
+  - 애니메이터 컨트롤러
+    <img src="img/애니메이션 컨트롤러.PNG">
+    애니메이션 컨트롤러는 'state machine' 과 거기에 연결된 animation clip을 갖는 에셋  
+    화살표가 트렌지션, 네모박스가 스테이트
+    
+    컴포넌트가 아닌 에셋이라서 게임 오브젝트에 직접 적용할 수가 없음 (??? 궁금증 해결,,)
+    애니메이터의 프로퍼터에 있는 애니메이터 컨트롤러로 링크를 설정해서 사용함
+  
+    Idle 스테이트 : 플레이거 가만히 있을 때 적용되는 애니메이션 약간 숨쉬는 듯한 느낌임..  
+    Run 스테이트 : 플레이가 뛸때 적용되는 애니메이션  
+    Walk 스테이트 : 플레이어가 걸을때 적용되는 애니메이션 (Run + left shift눌렀을때,)  
+  
+    Idle --> Run : Idle 스테이트에서 isRun이 True 일때( horizontal , vertical버튼이 눌렸을때) Run 스테이트로 이동  
+    Idle --> Walk : isRun이 True 일때 + isWalk가 True 일때(walk버튼이 눌렸을때) Walk 스테이트로 이동  
+    
+    Run --> Idle : Run 스테이트에서 isRun이 False 일때, Idle 스테이트로 이동  
+    Run --> walk : Run 스테이트에서 isWalk가 True 일때, Walk 스테이트로 이동  
+    
+    Walk --> Idle : Walk 스테이트에서 isRun False 일때, Idle 스테이트로 이동(Idle은 이동하지않은 상태니깐 isRun이 False여야 됨)  
+    Walk --> Run : Walk 스테이트에서 isWalk False 일때, Run 스테이트로 이동  
+  
+  - Script
+    전역변수에 Animator 객체 생성  
+  
+      Awake  
+    ```
+      ani = GetComponentInChildren<Animator>(); //animator 초기화
+    ```
+      Update
+    ```
+      ani.SetBool("isRun", moveVec != Vector3.zero);
+      ani.SetBool("isWalk", walkDown); 
+    ```
+    
