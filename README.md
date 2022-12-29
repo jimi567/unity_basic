@@ -56,8 +56,8 @@ Update()와 실행주기가 같음. 물리연산 영역의 FixedUpdate와 게임
 
 충돌은 collider 기준이기 때문에 실제 오브젝트의 매쉬와는 상관없이 collider에 따라 충돌이 다르게 일어 날 수 있음
 collder 크기를 플레이어옵젝에 발부분과 맞겠금 값을 조절해주었음 
-
-### 캐릭터 이동 구현
+***
+###  이동 구현
 
 ` public float speed = 1f; //player 움직일때 이동속도 `
 이동속도를 전역변수로 만들었음 접근자를 public으로 만들면 유니티에서도 값을 수정할 수 있음
@@ -86,7 +86,7 @@ void Move(float h, float v)
         rigid.MovePosition ( transform.position + moveVec * speed * Time.deltaTime );
         //현재 플레이어 위치인 transform.position 에다가 움직임을 더함 
         //Time.deltaTime은 시스템 여건에 따라 다른 프레임에 따라서 로직 결과가 달라지는 것을 방지해줌
-        // 60프레임일때나, 40프레임일때나 이동한 거리는 동일하도록 서로 보정해주는 역활을 함
+        // 60프레임일때나, 40프레임일때나 이동한 거리는 동일하도록 서로 보정해주는 역할을 함
     }
     
 ```
@@ -109,7 +109,7 @@ void Turn()
         rigid.MoveRotation(rotation);
     }
 ```
-
+***
 ### 점프 구현(1단점프만 점프중에 또 점프가 적용되지 않도록)
 
 + Updata 라이프 사이클에 "Jump" 버튼 입력 받음(디폴트키는 스페이스바)  
@@ -162,5 +162,36 @@ void Jump()
     }
 ```
 이걸 추가한 이후에 점프중에 점프가 안되도록 1단점프만 가능하도록 구현함
+***
+### 플레이어 애니메이션 추가 +걷기 추가
 
-  
+* 플레이어 걷기(walk)구현 
+먼저 left shift를 눌렀을때, 걷는 행동을 할 수 있게만드는 "Walk" 버튼을 추가했음
+버튼 추가는 unity Project Settings --> Input Manager에서 추가가능
+
+이 캐릭터가 걷고있는지아닌지를 판단해주는 bool값을 전역변수로 추가
+```
+bool walkDown; //플레이어가 걷고있는지 아닌지
+```
+
+Update() 
+``` 
+walkDown = Input.GetButton("Walk"); 쉬프트 누르는동안 walkDown = True; walk버튼은 input매니저에서 따로 left shift로 따로 추가함(보편적으로 게임에서 쉬프트눌러야 걷기라서)
+```
+Move() Move함수 인자에 isWalk를 추가해서 이 캐릭터가 걷고 있는지 아닌지를 판단
+```
+void Move(float h, float v, bool isWalk)
+    {
+        moveVec.Set(h, 0, v);
+
+        rigid.MovePosition(transform.position + moveVec * (isWalk ? speed * 0.7f : speed) * Time.deltaTime);
+        //현재 플레이어 위치인 transform.position 에다가 움직임을 더함 
+        //iswalk가 참이면 기존 speed에 7/10의 속도로 감
+    }
+```
+
+* 애니메이션 추가 (애니메이션 모델은 에셋에 있는걸 활용)
+  - Asset에 Animator controller(애니메이션을 컨트롤하는 컴포넌트) 추가 --> player 오브젝트에 자식 오브젝트중 Mesh Object에 애니메이션 컨트롤러 컴포넌트 추가(왜 여기다가 추가해야되지? player 오브젝트에 직접추가하면 안되는건가??)
+
+* 애니메이션 컨트롤러
+<img src="">
