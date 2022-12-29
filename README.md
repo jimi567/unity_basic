@@ -194,4 +194,4 @@ void Move(float h, float v, bool isWalk)
   - Asset에 Animator controller(애니메이션을 컨트롤하는 컴포넌트) 추가 --> player 오브젝트에 자식 오브젝트중 Mesh Object에 애니메이션 컨트롤러 컴포넌트 추가(왜 여기다가 추가해야되지? player 오브젝트에 직접추가하면 안되는건가??)
 
 * 애니메이션 컨트롤러
-<img src="">
+<img src="img/애니메이션 컨트롤러.PNG">
