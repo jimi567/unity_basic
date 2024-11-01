@@ -1,5 +1,4 @@
 # unity_basic
-A repository for recording the process of learning how to use Unity before a Unity projec
 
 ### 에셋 적용
 
